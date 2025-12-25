@@ -1,0 +1,113 @@
+classDiagram
+    %% 数据模型接口
+    class UserForm {
+        +string name 用户姓名
+        +string email 用户邮箱
+        +string phone 用户电话
+        +string bio 用户简介
+        +Preferences preferences 用户偏好设置
+    }
+
+    class Preferences {
+        +boolean newsletter 订阅新闻通讯
+        +boolean notifications 推送站内通知
+    }
+
+    class RegistrationForm {
+        +string username 用户名
+        +string password 密码
+        +string confirmPassword 确认密码
+        +string contact 联系方式（邮箱或手机号）
+        +'email' | 'phone' contactType 联系方式类型
+        +string bio 个人简介
+    }
+
+    class AppState {
+        +'view' | 'edit' | 'register' currentView 当前视图状态
+        +UserForm userData 用户数据
+    }
+
+    %% Action类型
+    class AppAction {
+        <<union>> 应用状态变更动作联合类型
+        +SET_VIEW action 设置当前视图
+        +UPDATE_USER_DATA action 更新用户数据
+        +REGISTER_USER action 注册新用户
+    }
+
+    %% 组件类
+    class App {
+        -useApp() hook 使用应用Context的Hook
+        +render() JSX.Element 渲染主应用界面
+    }
+
+    class UserProfileView {
+        +UserForm data 用户数据props
+        +() => void onEdit 编辑按钮点击回调
+        +() => void onRegister 注册按钮点击回调
+        +render() JSX.Element 渲染用户资料查看界面
+    }
+
+    class UserProfileEditor {
+        +UserForm data 用户数据props
+        +(data: UserForm) => void onSave 保存数据回调函数
+        +() => void onCancel 取消编辑回调函数
+        +render() JSX.Element 渲染用户资料编辑界面
+    }
+
+    class UserRegistration {
+        +(data: RegistrationForm) => void onRegister 注册成功回调函数
+        +() => void onCancel 取消注册回调函数
+        +render() JSX.Element 渲染用户注册界面
+    }
+
+    class AppProvider {
+        +ReactNode children 子组件
+        +render() JSX.Element 渲染Context Provider包装器
+    }
+
+    %% Context和Hook
+    class AppContext {
+        +AppState state 应用全局状态
+        +React.Dispatch~AppAction~ dispatch 状态分发器
+        +() => void handleEdit 处理编辑视图切换
+        +handleSave(data: UserForm) void 处理用户数据保存
+        +() => void handleCancel 处理取消操作
+        +handleRegister(data: RegistrationForm) void 处理用户注册
+        +() => void handleGoToRegister 处理跳转注册
+    }
+
+    class useApp {
+        +AppContext return 返回应用Context实例
+    }
+
+    %% 类型定义
+    class RegistrationStep {
+        <<enumeration>> 注册流程步骤枚举
+        input 输入注册信息
+        verifying 验证中
+        waiting_code 等待验证码
+        creating_account 创建账户中
+    }
+
+    %% 关系定义
+    UserForm --> Preferences : 包含
+    AppState --> UserForm : 包含
+
+    App --> AppContext : 使用
+    App --> UserProfileView : 渲染
+    App --> UserProfileEditor : 渲染
+    App --> UserRegistration : 渲染
+
+    AppProvider --> AppContext : 创建
+    AppProvider --> App : 包装
+
+    AppContext --> AppState : 管理
+    AppContext --> AppAction : 处理
+
+    useApp --> AppContext : 返回
+
+    UserProfileView --> UserForm : 显示
+    UserProfileEditor --> UserForm : 编辑
+    UserRegistration --> RegistrationForm : 管理
+    UserRegistration --> RegistrationStep : 使用

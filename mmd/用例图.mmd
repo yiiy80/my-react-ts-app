@@ -1,0 +1,49 @@
+graph TD
+    %% 定义参与者
+    A[新用户<br/>New User]
+    B[已注册用户<br/>Registered User]
+    C[用户管理系统<br/>User Management System]
+
+    %% 新用户用例
+    A --> D[用户注册<br/>User Registration]
+    D --> D1[填写注册信息<br/>Fill Registration Form]
+    D --> D2[验证联系方式<br/>Verify Contact Method]
+    D --> D3[输入验证码<br/>Enter Verification Code]
+    D --> D4[创建账户<br/>Create Account]
+
+    %% 已注册用户用例
+    B --> E[查看用户资料<br/>View User Profile]
+    B --> F[编辑用户资料<br/>Edit User Profile]
+
+    E --> E1[显示基本信息<br/>Display Basic Info]
+    E --> E2[显示偏好设置<br/>Display Preferences]
+    E --> E3[显示个人简介<br/>Display Bio]
+
+    F --> F1[修改基本信息<br/>Edit Basic Info]
+    F --> F2[修改偏好设置<br/>Edit Preferences]
+    F --> F3[修改个人简介<br/>Edit Bio]
+    F --> F4[保存更改<br/>Save Changes]
+
+    %% 系统用例
+    C --> G[验证表单数据<br/>Validate Form Data]
+    C --> H[发送验证码<br/>Send Verification Code]
+    C --> I[验证验证码<br/>Verify Code]
+    C --> J[存储用户信息<br/>Store User Data]
+    C --> K[更新用户信息<br/>Update User Data]
+
+    %% 关系连接
+    D1 --> G
+    D2 --> H
+    D3 --> I
+    D4 --> J
+
+    F4 --> K
+
+    %% 样式定义
+    classDef actorClass fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef usecaseClass fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef systemClass fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+
+    class A,B actorClass
+    class D,D1,D2,D3,D4,E,F,E1,E2,E3,F1,F2,F3,F4 usecaseClass
+    class C,G,H,I,J,K systemClass

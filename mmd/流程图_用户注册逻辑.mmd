@@ -1,0 +1,65 @@
+---
+title: 用户注册逻辑流程图
+---
+flowchart TD
+    A[开始注册流程] --> B[等待用户输入]
+
+    B --> C[用户提交表单<br/>用户名、密码、确认密码<br/>邮箱/手机号、个人简介]
+    C --> D{字段验证}
+
+    D -->|用户名为空| W[显示用户名错误]
+    W --> B
+    D -->|密码长度不足| X[显示密码长度错误]
+    X --> B
+    D -->|密码复杂度不足| Y[显示密码复杂度错误]
+    Y --> B
+    D -->|密码不一致| Z[显示密码不一致错误]
+    Z --> B
+    D -->|联系方式为空| AA[显示联系方式错误]
+    AA --> B
+    D -->|联系方式格式错误| BB[显示格式错误]
+    BB --> B
+
+    D -->|验证通过| F[发送验证码请求]
+    F --> G{验证码发送}
+
+    G -->|发送失败<br/>频率限制| H[显示发送失败提示]
+    H --> B
+
+    G -->|发送成功| I[显示验证码输入界面]
+    I --> J[等待用户输入验证码]
+
+    J --> K[用户提交验证码]
+    K --> L{验证码验证}
+
+    L -->|验证码错误| M[显示验证码错误提示]
+    M --> J
+
+    L -->|验证码正确| N[创建账户<br/>包含个人简介]
+    N --> O{账户创建}
+
+    O -->|用户名已存在<br/>或密码错误| P[显示创建失败提示]
+    P --> J
+
+    O -->|创建成功| Q[写入数据库]
+    Q --> R{数据库操作}
+
+    R -->|写入成功| S[注册成功]
+    S --> T[显示成功提示]
+    T --> U[结束注册流程]
+
+    R -->|写入失败| V[显示数据库错误]
+    V --> J
+
+    style A fill:#e1f5fe
+    style S fill:#c8e6c9
+    style W fill:#ffcdd2
+    style X fill:#ffcdd2
+    style Y fill:#ffcdd2
+    style Z fill:#ffcdd2
+    style AA fill:#ffcdd2
+    style BB fill:#ffcdd2
+    style H fill:#ffcdd2
+    style M fill:#ffcdd2
+    style P fill:#ffcdd2
+    style V fill:#ffcdd2

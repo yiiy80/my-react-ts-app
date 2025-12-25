@@ -1,0 +1,101 @@
+graph TD
+    %% 定义对象节点 - Context和Reducer架构
+    AppProvider["AppProvider<br/>上下文提供者<br/>包装整个应用"]
+
+    AppContext["AppContext<br/>应用上下文<br/>useReducer + useContext"]
+
+    appReducer["appReducer<br/>状态Reducer<br/>处理所有状态变更"]
+
+    appState["appState: AppState<br/>currentView: 'view'<br/>userData: UserForm"]
+
+    userData["userData: UserForm<br/>name: '张三'<br/>email: 'zhangsan@example.com'<br/>phone: '+86 138 0000 0000'<br/>bio: '热爱前端开发...'<br/>preferences: Preferences"]
+
+    preferences["preferences: Preferences<br/>newsletter: true<br/>notifications: false"]
+
+    App["App<br/>主应用组件<br/>使用useApp Hook"]
+
+    UserProfileView["UserProfileView<br/>用户资料查看组件"]
+
+    UserProfileEditor["UserProfileEditor<br/>用户资料编辑组件"]
+
+    UserRegistration["UserRegistration<br/>用户注册组件"]
+
+    registrationForm["registrationForm: RegistrationForm<br/>username: ''<br/>password: ''<br/>confirmPassword: ''<br/>contact: ''<br/>contactType: 'email'<br/>bio: ''"]
+
+    fieldErrors["fieldErrors: Object<br/>username: undefined<br/>password: undefined<br/>confirmPassword: undefined<br/>contact: undefined"]
+
+    step["step: RegistrationStep<br/>value: 'input'"]
+
+    verificationCode["verificationCode: String<br/>value: ''"]
+
+    isLoading["isLoading: Boolean<br/>value: false"]
+
+    isSaving["isSaving: Boolean<br/>value: false"]
+
+    dispatch["dispatch<br/>Action分发器<br/>触发状态变更"]
+
+    handleEdit["handleEdit<br/>编辑处理器<br/>dispatch SET_VIEW"]
+
+    handleSave["handleSave<br/>保存处理器<br/>dispatch UPDATE_USER_DATA"]
+
+    handleCancel["handleCancel<br/>取消处理器<br/>dispatch SET_VIEW"]
+
+    handleRegister["handleRegister<br/>注册处理器<br/>dispatch REGISTER_USER"]
+
+    handleGoToRegister["handleGoToRegister<br/>跳转处理器<br/>dispatch SET_VIEW"]
+
+    %% 对象关系 - Context架构
+    AppProvider -->|"创建"| AppContext
+    AppProvider -->|"初始化"| appState
+    AppProvider -->|"定义"| appReducer
+
+    AppContext -->|"包含"| appState
+    AppContext -->|"提供"| dispatch
+    AppContext -->|"提供"| handleEdit
+    AppContext -->|"提供"| handleSave
+    AppContext -->|"提供"| handleCancel
+    AppContext -->|"提供"| handleRegister
+    AppContext -->|"提供"| handleGoToRegister
+
+    appReducer -->|"处理"| dispatch
+
+    appState -->|"包含"| userData
+    userData -->|"包含"| preferences
+
+    App -->|"使用"| AppContext
+    App -->|"渲染"| UserProfileView
+    App -->|"渲染"| UserProfileEditor
+    App -->|"渲染"| UserRegistration
+
+    UserProfileView -->|"使用"| handleEdit
+    UserProfileView -->|"使用"| handleGoToRegister
+    UserProfileView -->|"显示"| userData
+
+    UserProfileEditor -->|"使用"| handleSave
+    UserProfileEditor -->|"使用"| handleCancel
+    UserProfileEditor -->|"编辑"| userData
+    UserProfileEditor -->|"状态"| isSaving
+
+    UserRegistration -->|"使用"| handleRegister
+    UserRegistration -->|"使用"| handleCancel
+    UserRegistration -->|"管理"| registrationForm
+    UserRegistration -->|"维护"| fieldErrors
+    UserRegistration -->|"控制"| step
+    UserRegistration -->|"处理"| verificationCode
+    UserRegistration -->|"状态"| isLoading
+
+    %% 样式定义
+    classDef contextClass fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef reducerClass fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef stateClass fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef componentClass fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef dataClass fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+    classDef actionClass fill:#f1f8e9,stroke:#689f38,stroke-width:2px
+
+    class AppProvider,AppContext contextClass
+    class appReducer reducerClass
+    class appState dataClass
+    class App,UserProfileView,UserProfileEditor,UserRegistration componentClass
+    class userData,preferences,registrationForm dataClass
+    class fieldErrors,step,verificationCode,isLoading,isSaving stateClass
+    class dispatch,handleEdit,handleSave,handleCancel,handleRegister,handleGoToRegister actionClass

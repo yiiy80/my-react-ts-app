@@ -1,0 +1,30 @@
+---
+title: 标准的登录逻辑流程图
+config:
+  layout: default
+  look: default
+  theme: neutral
+---
+graph TD
+    A([开始]) --> B[用户访问登录页面]
+    B --> C{输入信息?}
+    C -- 否 --> D[提示: 账号/密码不能为空]
+    C -- 是 --> E[前端格式校验]
+    E -- 格式错误 --> F[提示: 格式不正确]
+    E -- 格式正确 --> G[发送登录请求到服务器]
+    G --> H{验证通过?}
+    H -- 否 --> I[提示: 账号或密码错误<br>或账户不存在]
+    I --> J{错误次数过多?}
+    J -- 是 --> K[锁定账户/触发验证码]
+    J -- 否 --> C
+    H -- 是 --> L[生成 Token / Session]
+    L --> M[记录登录日志]
+    M --> N[跳转至首页/个人中心]
+    N --> O([结束])
+
+    style A fill:#4CAF50,stroke:#388E3C,color:white
+    style O fill:#4CAF50,stroke:#388E3C,color:white
+    style C fill:#FFC107,stroke:#FFA000
+    style H fill:#FFC107,stroke:#FFA000
+    style K fill:#F44336,stroke:#D32F2F,color:white
+    style N fill:#2196F3,stroke:#1976D2,color:white

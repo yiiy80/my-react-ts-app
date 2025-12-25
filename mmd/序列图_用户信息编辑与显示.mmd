@@ -1,0 +1,41 @@
+---
+title: 用户信息编辑与显示流程
+config:
+  layout: default
+  look: default
+  theme: neutral
+---
+sequenceDiagram
+    autonumber
+    participant User as 用户
+    participant FE as 前端界面
+    participant BE as 后端服务
+    participant DB as 数据库
+
+    Note over User,FE: 场景一：显示用户信息
+
+    User->>FE: 访问个人中心/编辑页面
+    FE->>BE: 发送获取用户信息请求 (GET /api/user/profile)
+    BE->>DB: 查询用户数据
+    DB-->>BE: 返回用户详细信息
+    BE-->>FE: 返回用户数据 (JSON)
+    FE-->>User: 渲染表单并显示信息
+
+    Note over User,FE: 场景二：编辑并保存信息
+
+    User->>FE: 修改表单字段，点击“保存”
+    FE->>FE: 执行前端表单校验(同步)
+    alt 校验失败
+        FE-->>User: 高亮错误字段，显示提示(如: "手机号格式错误")
+    else 校验通过
+        FE->>BE: 发送更新请求 (PUT /api/user/profile, 新数据)
+        alt 验证通过
+            BE->>DB: 更新数据库记录
+            DB-->>BE: 确认更新成功
+            BE-->>FE: 返回成功状态 (200 OK)
+            FE-->>User: 提示“保存成功”
+        else 验证失败/更新错误
+            BE-->>FE: 返回错误状态 (400/500)
+            FE-->>User: 提示“保存失败，请重试”
+        end
+    end

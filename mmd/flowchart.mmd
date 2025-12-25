@@ -1,0 +1,38 @@
+---
+title: FlowChart
+config:
+  layout: elk
+  look: handDrawn
+  theme: neutral
+---
+flowchart TD
+  A[Start] --> B{Is it?}
+  B -->|Yes| C[OK]
+  C --> D[Rethink]
+  D --> B
+  B ---->|No| E[End]
+
+    subgraph subgraph1
+        direction TB
+        top1[top] --> bottom1[bottom]
+    end
+    subgraph subgraph2
+        direction TB
+        top2[top] --> bottom2[bottom]
+    end
+    %% ^ These subgraphs are identical, except for the links to them:
+
+    %% Link *to* subgraph1: subgraph1 direction is maintained
+    outside --> subgraph1
+    %% Link *within* subgraph2:
+    %% subgraph2 inherits the direction of the top-level graph (LR)
+    outside ---> top2
+
+
+    A1-->B1
+    B1-->C1
+    C1-->D1
+    click A1 callback "Tooltip for a callback"
+    click B1 "https://www.github.com" "This is a tooltip for a link"
+    click C1 call callback() "Tooltip for a callback"
+    click D1 href "https://www.github.com" "This is a tooltip for a link"
