@@ -127,6 +127,10 @@ public/                 # 公共资源
 - 自定义过渡动画
 - 移动端响应式布局
 
+## BookMark
+- [React 官方中文文档](https://zh-hans.react.dev/)
+- [Promise - JavaScript | MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/)
+
 ## React Compiler
 
 The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
@@ -190,7 +194,3 @@ export default defineConfig([
     },
   },
 ])
-
-## BookMark
-- [React 官方中文文档](https://zh-hans.react.dev/)
-- [Promise - JavaScript | MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/)
