@@ -130,6 +130,7 @@ public/                 # 公共资源
 ## BookMark
 - [React 官方中文文档](https://zh-hans.react.dev/)
 - [Promise - JavaScript | MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/)
+- [Styling with utility classes - Core concepts - Tailwind CSS](https://tailwindcss.com/docs/styling-with-utility-classes)
 
 ## React Compiler
 
