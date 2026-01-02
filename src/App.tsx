@@ -2,6 +2,7 @@ import UserProfileEditor from "./components/UserProfileEditor";
 import UserProfileView from "./components/UserProfileView";
 import UserRegistration from "./components/UserRegistration";
 import Home from "./components/Home";
+import FormExample from "./components/FormExample";
 import { useApp } from "./contexts/AppContext";
 import "./App.css";
 
@@ -17,7 +18,8 @@ function App() {
 
   return (
     <div>
-      <Home />
+      {/* <Home /> */}
+      {/* <FormExample /> */}
       {state.currentView === "view" ? (
         <UserProfileView
           data={state.userData}

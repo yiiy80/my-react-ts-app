@@ -25,48 +25,77 @@ export default function UserProfileEditor({ data, onSave, onCancel }: Props) {
   const [formData, setFormData] = useState<UserForm>(data);
   const [isSaving, setIsSaving] = useState(false);
 
-  // --- 4. 事件处理函数 ---
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  // --- handle field blur (update state only when field loses focus) ---
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value, type } = e.target;
+    const { name, type } = e.target as HTMLInputElement | HTMLTextAreaElement;
+    const value =
+      type === "checkbox"
+        ? (e.target as HTMLInputElement).checked
+        : (e.target as HTMLInputElement).value;
 
-    // 处理嵌套对象 (如 preferences.newsletter)
     if (name.includes(".")) {
       const [parent, child] = name.split(".");
       setFormData({
         ...formData,
         [parent]: {
           ...(formData[parent as keyof UserForm] as Record<string, any>),
-          [child]:
-            type === "checkbox"
-              ? (e.target as HTMLInputElement).checked
-              : value,
+          [child]: value,
         },
       });
     } else {
-      // 处理普通字段
       setFormData({
         ...formData,
-        [name]:
-          type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+        [name]: value,
       });
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // --- utility to read latest values from the form element on submit ---
+  const readFormFromElement = (form: HTMLFormElement): UserForm => {
+    return {
+      name:
+        (form.querySelector<HTMLInputElement>("#name")?.value as string) || "",
+      email:
+        (form.querySelector<HTMLInputElement>("#email")?.value as string) || "",
+      phone:
+        (form.querySelector<HTMLInputElement>("#phone")?.value as string) || "",
+      bio:
+        (form.querySelector<HTMLTextAreaElement>("#bio")?.value as string) ||
+        "",
+      preferences: {
+        newsletter: !!(
+          form.querySelector<HTMLInputElement>(
+            "#newsletter"
+          ) as HTMLInputElement
+        )?.checked,
+        notifications: !!(
+          form.querySelector<HTMLInputElement>(
+            "#notifications"
+          ) as HTMLInputElement
+        )?.checked,
+      },
+    };
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // read current values from the form (captures unblurred edits)
+    const updated = readFormFromElement(e.currentTarget as HTMLFormElement);
+    setFormData(updated);
+
     setIsSaving(true);
 
     // 模拟 API 调用
     setTimeout(() => {
-      console.log("保存数据:", JSON.stringify(formData));
+      console.log("保存数据:", JSON.stringify(updated));
       setIsSaving(false);
-      onSave?.(formData);
+      onSave?.(updated);
     }, 1000);
   };
 
-  // --- 5. JSX 结构 (Tailwind CSS 样式) ---
+  // --- JSX (use defaultValue/defaultChecked + onBlur instead of value/checked + onChange) ---
   return (
     <div className="w-200 min-h-screen bg-gray-50 py-6 flex flex-col justify-center sm:py-12">
       {/* 页面标题栏 */}
@@ -110,8 +139,8 @@ export default function UserProfileEditor({ data, onSave, onCancel }: Props) {
                   type="text"
                   id="name"
                   name="name"
-                  value={formData.name}
-                  onChange={handleChange}
+                  defaultValue={formData.name}
+                  onBlur={handleBlur}
                   className="block w-full px-4 py-2 border border-gray-300 rounded-lg 
                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   required
@@ -130,8 +159,8 @@ export default function UserProfileEditor({ data, onSave, onCancel }: Props) {
                   type="email"
                   id="email"
                   name="email"
-                  value={formData.email}
-                  onChange={handleChange}
+                  defaultValue={formData.email}
+                  onBlur={handleBlur}
                   className="block w-full px-4 py-2 border border-gray-300 rounded-lg 
                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                 />
@@ -150,8 +179,8 @@ export default function UserProfileEditor({ data, onSave, onCancel }: Props) {
                 type="tel"
                 id="phone"
                 name="phone"
-                value={formData.phone}
-                onChange={handleChange}
+                defaultValue={formData.phone}
+                onBlur={handleBlur}
                 className="block w-full px-4 py-2 border border-gray-300 rounded-lg 
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               />
@@ -168,8 +197,8 @@ export default function UserProfileEditor({ data, onSave, onCancel }: Props) {
               <textarea
                 id="bio"
                 name="bio"
-                value={formData.bio}
-                onChange={handleChange}
+                defaultValue={formData.bio}
+                onBlur={handleBlur}
                 rows={4}
                 className="block w-full px-4 py-2 border border-gray-300 rounded-lg 
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
@@ -189,8 +218,8 @@ export default function UserProfileEditor({ data, onSave, onCancel }: Props) {
                       id="newsletter"
                       name="preferences.newsletter"
                       type="checkbox"
-                      checked={formData.preferences.newsletter}
-                      onChange={handleChange}
+                      defaultChecked={formData.preferences.newsletter}
+                      onBlur={handleBlur}
                       className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                     />
                   </div>
@@ -213,8 +242,8 @@ export default function UserProfileEditor({ data, onSave, onCancel }: Props) {
                       id="notifications"
                       name="preferences.notifications"
                       type="checkbox"
-                      checked={formData.preferences.notifications}
-                      onChange={handleChange}
+                      defaultChecked={formData.preferences.notifications}
+                      onBlur={handleBlur}
                       className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                     />
                   </div>
